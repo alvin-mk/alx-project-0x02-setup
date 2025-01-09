@@ -1,49 +1,73 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
-const PostModal = ({ onSave }: { onSave: (title: string, content: string) => void }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+interface PostModalProps {
+  title: string;
+  content: string;
+  userId: number;
+  onClose: () => void;
+  onSave: (updatedTitle: string, updatedContent: string) => void;
+}
 
-  const handleSubmit = () => {
-    onSave(title, content);
-    setTitle('');
-    setContent('');
-    setIsOpen(false);
+const PostModal: React.FC<PostModalProps> = ({ title, content, userId, onClose, onSave }) => {
+  const [updatedTitle, setUpdatedTitle] = useState(title);
+  const [updatedContent, setUpdatedContent] = useState(content);
+
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSave(updatedTitle, updatedContent);
+    onClose(); // Close the modal after saving
   };
 
   return (
-    <>
-      <button onClick={() => setIsOpen(true)} className="bg-blue-500 text-white px-4 py-2 rounded">
-        Add Post
-      </button>
-      {isOpen && (
-        <div className="fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-6 rounded shadow-md">
-            <h2 className="text-xl mb-4">Add Post</h2>
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
+      <div className="bg-white p-8 rounded-lg w-full max-w-lg">
+        <h2 className="text-2xl font-semibold mb-4">Edit Post</h2>
+
+        <form onSubmit={handleSave}>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700" htmlFor="title">
+              Title
+            </label>
             <input
               type="text"
-              placeholder="Title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="border p-2 w-full mb-2"
+              id="title"
+              className="w-full p-2 border border-gray-300 rounded-md"
+              value={updatedTitle}
+              onChange={(e) => setUpdatedTitle(e.target.value)}
             />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700" htmlFor="content">
+              Content
+            </label>
             <textarea
-              placeholder="Content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              className="border p-2 w-full mb-4"
+              id="content"
+              rows={4}
+              className="w-full p-2 border border-gray-300 rounded-md"
+              value={updatedContent}
+              onChange={(e) => setUpdatedContent(e.target.value)}
             />
-            <button onClick={handleSubmit} className="bg-green-500 text-white px-4 py-2 rounded mr-2">
-              Save
-            </button>
-            <button onClick={() => setIsOpen(false)} className="bg-red-500 text-white px-4 py-2 rounded">
+          </div>
+
+          <div className="flex justify-between">
+            <button
+              type="button"
+              onClick={onClose}
+              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+            >
               Cancel
             </button>
+            <button
+              type="submit"
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+            >
+              Save
+            </button>
           </div>
-        </div>
-      )}
-    </>
+        </form>
+      </div>
+    </div>
   );
 };
 
