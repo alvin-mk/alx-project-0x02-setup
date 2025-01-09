@@ -1,31 +1,54 @@
+import React, { useEffect, useState } from 'react';
 import Header from '../components/layout/Header';
-import PostModal from '../components/common/PostModal';
-import { useState } from 'react';
+import PostCard from '../components/common/PostCard';
+import { PostProps } from '../interfaces';
 
-const HomePage = () => {
-  const [posts, setPosts] = useState<{ title: string; content: string }[]>([]);
+const Home: React.FC = () => {
+  const [posts, setPosts] = useState<PostProps[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const handleSavePost = (title: string, content: string) => {
-    setPosts([...posts, { title, content }]);
-  };
+  // Fetch posts data from the API (JSONPlaceholder)
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+        const data = await response.json();
+        setPosts(data);
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
 
   return (
-    <>
+    <div>
       <Header />
-      <div className="p-4">
-        <h1 className="text-2xl font-bold mb-4">Home Page</h1>
-        <PostModal onSave={handleSavePost} />
-        <div className="mt-4">
-          {posts.map((post, index) => (
-            <div key={index} className="border rounded p-4 my-2">
-              <h2 className="text-lg font-bold">{post.title}</h2>
-              <p>{post.content}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </>
+      <main className="p-6">
+        <h2 className="text-3xl font-bold mb-6">Welcome to the Home Page</h2>
+
+        {/* Loading state */}
+        {loading ? (
+          <div className="text-center">Loading posts...</div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Display each post */}
+            {posts.map((post) => (
+              <PostCard
+                key={post.id}
+                title={post.title}
+                content={post.body}
+                userId={post.userId}
+              />
+            ))}
+          </div>
+        )}
+      </main>
+    </div>
   );
 };
 
-export default HomePage;
+export default Home;
