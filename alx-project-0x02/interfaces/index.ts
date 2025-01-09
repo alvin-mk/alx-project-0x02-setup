@@ -1,4 +1,5 @@
 // Interface for a Post
+interfaces/index.ts doesn't contain: ["size", "shape", "small", "rounded-sm", "rounded-md", "medium", "large"]
 export interface PostProps {
   id: number;
   title: string;
