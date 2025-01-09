@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Card from", "@/components/common/Card
 import Header from '../components/layout/Header';
 import PostCard from '../components/common/PostCard';
 import { PostProps } from '../interfaces';
